@@ -53,10 +53,31 @@ async def test_project(dut):
     dut.ui_in.value[4] = 0
     await ClockCycles(dut.clk, 1)
     
+    dut.ui_in.value[5] = 1  # Trigger check
+    await ClockCycles(dut.clk, 1)
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    # assert dut.uo_out.value == 50
+    # Verify check is active
+    assert dut.uo_out.value[0] == 1  # Check active
+    dut._log.info(f"Check started - CHECK_ACTIVE: {dut.uo_out.value[0]}")
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    # Wait for the check to complete (wait for sufficient cycles)
+    # The check process iterates through all 81 cells, so we need enough cycles
+    await ClockCycles(dut.clk, 100)  # Wait for 100 cycles to ensure completion
+    
+    # Check the status after waiting
+    check_active = dut.uo_out.value[0]
+    check_done = dut.uo_out.value[1] 
+    error_detected = dut.uo_out.value[2]
+    
+    dut._log.info(f"After waiting - CHECK_ACTIVE: {check_active}, CHECK_DONE: {check_done}, ERROR_DETECTED: {error_detected}")
+    
+    # Verify the check is completed
+    assert check_done == 1, f"Expected CHECK_DONE=1, got {check_done}"
+    assert check_active == 0, f"Expected CHECK_ACTIVE=0 (finished), got {check_active}"
+    
+    # For a valid sudoku solution, we should not have errors
+    assert error_detected == 0, f"Expected no errors for valid sudoku, got ERROR_DETECTED={error_detected}"
+    
+    dut._log.info("Test completed successfully - valid sudoku solution verified")
+
+

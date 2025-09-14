@@ -27,7 +27,6 @@ module tt_um_sudoku (
 
   
 
-  integer i, j;
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       integer i, j;
@@ -57,7 +56,7 @@ module tt_um_sudoku (
   assign uo_out[0] = check_active;
   reg check_done;
   assign uo_out[1] = check_done;
-  
+
   reg utilized_numbers[8:0];
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n || !check_active && trigger_check) begin
@@ -70,7 +69,6 @@ module tt_um_sudoku (
 
     if (check_active) begin
       if(current_col) begin
-        reg_array[current_row][current_col] <= number;
         if(current_col == 9) begin
           current_row <= current_row + 1;
           current_col <= 0;
@@ -83,6 +81,11 @@ module tt_um_sudoku (
         end
         utilized_numbers[reg_array[current_row][current_col]] <= 1;
       end
+    end
+
+    if(current_row == 9) begin
+      check_active <= 0;
+      check_done <= 1;
     end
   end
 
