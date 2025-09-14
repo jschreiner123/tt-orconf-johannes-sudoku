@@ -15,9 +15,9 @@ module tt_um_sudoku (
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
-  reg [4:0] reg_array [8:0][8:0];
-  reg [4:0] current_col;
-  reg [4:0] current_row;
+  reg [3:0] reg_array [8:0][8:0];
+  reg [3:0] current_col;
+  reg [3:0] current_row;
 
   wire number_valid;
   wire [3:0] number;
@@ -58,8 +58,8 @@ module tt_um_sudoku (
   assign uo_out[1] = check_done;
 
   
-  reg [4:0] check_current_col;
-  reg [4:0] check_current_row;
+  reg [3:0] check_current_col;
+  reg [3:0] check_current_row;
 
   reg utilized_numbers[8:0];
   always @(posedge clk or negedge rst_n) begin
