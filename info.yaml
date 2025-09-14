@@ -37,7 +37,7 @@ pinout:
   # Outputs
   uo[0]: "CHECK_ACTIVE"
   uo[1]: "CHECK_DONE"
-  uo[2]: "CHECK_RESULT"
+  uo[2]: "ERROR_DETECTED"
   uo[3]: "VIOLATION_ROW0"
   uo[4]: "VIOLATION_ROW1"
   uo[5]: "VIOLATION_ROW2"

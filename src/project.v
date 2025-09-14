@@ -21,8 +21,11 @@ module tt_um_sudoku (
 
   wire number_valid;
   wire [3:0] number;
+
   assign number_valid = ui_in[4];
   assign number = ui_in[3:0];
+  assign trigger_check = ui_in[5];
+  
 
   integer i, j;
   always @(posedge clk or negedge rst_n) begin
@@ -44,8 +47,43 @@ module tt_um_sudoku (
     end
   end
 
+
+  reg err_detected;
+  assign uo_out[2] = err_detected;
+  reg check_active;
+  assign uo_out[0] = check_active;
+  reg check_done;
+  assign uo_out[1] = check_done;
+  reg utilized_numbers[8:0];
+  always @(posedge clk or negedge rst_n) begin
+    if (!rst_n && !check_active && trigger_check) begin
+      current_col <= 0;
+      current_row <= 0;
+      err_detected <= 0;
+    end
+
+    if (check_active) begin
+      if(current_col) begin
+        reg_array[current_row][current_col] <= number;
+        current_col <= (current_col + 1) % 9;
+        if(current_col == 9) begin
+          current_row <= current_row + 1;
+          current_col <= 0;
+          check_status <= 0;
+        end
+
+        if(utilized_numbers[reg_array[current_row][current_col]]) begin
+          err_detected <= 1;
+        end
+        utilized_numbers[reg_array[current_row][current_col]] <= 1;
+      end
+    end
+  end
+
+  
+
   // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in - uio_in;  // Example: ou_out is the sum of ui_in and uio_in
+  assign uo_out[7:3] = 0;  // Example: ou_out is the sum of ui_in and uio_in
   assign uio_out = 0;
   assign uio_oe  = 0;
 
