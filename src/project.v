@@ -77,23 +77,20 @@ module tt_um_sudoku (
       end
  
       if (check_active) begin
-        if(check_current_col) begin
-          if(check_current_col == 9) begin
-            check_current_row <= check_current_row + 1;
-            check_current_col <= 0;
-            utilized_numbers <= 9'b0; // Reset for new row
-          end else begin
-            check_current_col <= (check_current_col + 1);
+        if(check_current_col == 9) begin
+          check_current_row <= check_current_row + 1;
+          check_current_col <= 0;
+          utilized_numbers <= 9'b0; // Reset for new row
+        end else begin
+          check_current_col <= (check_current_col + 1);
 
-            // Only check non-zero values (1-9), convert to 0-8 index
-            if(reg_array[check_current_row][check_current_col] != 0) begin
-              if(utilized_numbers[reg_array[check_current_row][check_current_col] - 1]) begin
-                err_detected <= 1;
-              end
-              utilized_numbers[reg_array[check_current_row][check_current_col] - 1] <= 1;
+          // Only check non-zero values (1-9), convert to 0-8 index
+          if(reg_array[check_current_row][check_current_col] != 0) begin
+            if(utilized_numbers[reg_array[check_current_row][check_current_col] - 1]) begin
+              err_detected <= 1;
             end
+            utilized_numbers[reg_array[check_current_row][check_current_col] - 1] <= 1;
           end
-
         end
       end
     end
