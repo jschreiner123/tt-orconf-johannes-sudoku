@@ -27,7 +27,7 @@ module tt_um_sudoku (
 
   
 
-  always @(posedge clk or negedge rst_n) begin
+  always @(posedge clk) begin
     if (!rst_n) begin
       integer i, j;
       // for (i = 0; i < 9; i = i + 1) begin
@@ -62,7 +62,7 @@ module tt_um_sudoku (
   reg [3:0] check_current_row;
 
   reg[8:0] utilized_numbers;
-  always @(posedge clk or negedge rst_n) begin
+  always @(posedge clk) begin
     if (!rst_n || !check_active && trigger_check) begin
       check_current_col <= 0;
       check_current_row <= 0;
@@ -75,26 +75,26 @@ module tt_um_sudoku (
         check_active <= 0;
         check_done <= 1;
       end
-    end
+ 
+      if (check_active) begin
+        if(check_current_col) begin
+          if(check_current_col == 9) begin
+            check_current_row <= check_current_row + 1;
+            check_current_col <= 0;
+            utilized_numbers <= 9'b0; // Reset for new row
+          end else begin
+            check_current_col <= (check_current_col + 1);
 
-    if (check_active) begin
-      if(check_current_col) begin
-        if(check_current_col == 9) begin
-          check_current_row <= check_current_row + 1;
-          check_current_col <= 0;
-          utilized_numbers <= 9'b0; // Reset for new row
-        end else begin
-          check_current_col <= (check_current_col + 1);
+            Only check non-zero values (1-9), convert to 0-8 index
+            if(reg_array[check_current_row][check_current_col] != 0) begin
+              if(utilized_numbers[reg_array[check_current_row][check_current_col] - 1]) begin
+                err_detected <= 1;
+              end
+              utilized_numbers[reg_array[check_current_row][check_current_col] - 1] <= 1;
+            end
+          end
 
-          // Only check non-zero values (1-9), convert to 0-8 index
-          // if(reg_array[check_current_row][check_current_col] != 0) begin
-          //   if(utilized_numbers[reg_array[check_current_row][check_current_col] - 1]) begin
-          //     err_detected <= 1;
-          //   end
-          //   utilized_numbers[reg_array[check_current_row][check_current_col] - 1] <= 1;
-          // end
         end
-
       end
     end
 
