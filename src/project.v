@@ -85,7 +85,7 @@ module tt_um_sudoku (
           end else begin
             check_current_col <= (check_current_col + 1);
 
-            Only check non-zero values (1-9), convert to 0-8 index
+            // Only check non-zero values (1-9), convert to 0-8 index
             if(reg_array[check_current_row][check_current_col] != 0) begin
               if(utilized_numbers[reg_array[check_current_row][check_current_col] - 1]) begin
                 err_detected <= 1;
