@@ -61,7 +61,7 @@ module tt_um_sudoku (
   reg [3:0] check_current_col;
   reg [3:0] check_current_row;
 
-  reg utilized_numbers[8:0];
+  reg[8:0] utilized_numbers;
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n || !check_active && trigger_check) begin
       check_current_col <= 0;
@@ -69,6 +69,7 @@ module tt_um_sudoku (
       err_detected <= 0;
       check_done <= 0;
       check_active <= trigger_check;
+      utilized_numbers <= 9'b0; // Reset the bit mask
     end
 
     if (check_active) begin
@@ -76,14 +77,18 @@ module tt_um_sudoku (
         if(check_current_col == 9) begin
           check_current_row <= check_current_row + 1;
           check_current_col <= 0;
+          utilized_numbers <= 9'b0; // Reset for new row
         end else begin
           check_current_col <= (check_current_col + 1);
         end
 
-        if(utilized_numbers[reg_array[check_current_row][check_current_col]]) begin
-          err_detected <= 1;
+        // Only check non-zero values (1-9), convert to 0-8 index
+        if(reg_array[check_current_row][check_current_col] != 0) begin
+          if(utilized_numbers[reg_array[check_current_row][check_current_col] - 1]) begin
+            err_detected <= 1;
+          end
+          utilized_numbers[reg_array[check_current_row][check_current_col] - 1] <= 1;
         end
-        utilized_numbers[reg_array[check_current_row][check_current_col]] <= 1;
       end
     end
 
