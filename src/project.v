@@ -70,8 +70,13 @@ module tt_um_sudoku (
       check_done <= 0;
       check_active <= trigger_check;
       utilized_numbers <= 9'b0; // Reset the bit mask
+    end else begin
+      if(check_current_row == 9) begin
+        check_active <= 0;
+        check_done <= 1;
+      end
     end
-
+    
     if (check_active) begin
       if(check_current_col) begin
         if(check_current_col == 9) begin
@@ -92,10 +97,6 @@ module tt_um_sudoku (
       end
     end
 
-    if(check_current_row == 9) begin
-      check_active <= 0;
-      check_done <= 1;
-    end
   end
 
   
