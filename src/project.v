@@ -30,11 +30,11 @@ module tt_um_sudoku (
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       integer i, j;
-      for (i = 0; i < 9; i = i + 1) begin
-        for (j = 0; j < 9; j = j + 1) begin
-          reg_array[i][j] <= 5'b0000; // Fixed value
-        end
-      end
+      // for (i = 0; i < 9; i = i + 1) begin
+      //   for (j = 0; j < 9; j = j + 1) begin
+      //     reg_array[i][j] <= 4'b0000; // Fixed value
+      //   end
+      // end
       current_col <= 0;
       current_row <= 0;
     end else begin
